@@ -1,5 +1,21 @@
+
 {
+  "name": "sistema-gym-demo",
+  "version": "1.0.0",
+  "description": "Sistema de gestión de gimnasio - DEMO",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "keywords": [],
+  "author": "Levi Prog.",
+  "license": "ISC",
   "dependencies": {
-    "bcrypt": "5.1.0"
+    "bcrypt": "5.1.0",
+    "dotenv": "^16.3.1",
+    "ejs": "^3.1.9",
+    "express": "^4.19.2",
+    "express-session": "^1.17.3",
+    "mongoose": "^7.6.1"
   }
 }
