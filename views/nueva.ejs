@@ -2,63 +2,141 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Nuevo Alumno - Sistema GYM DEMO</title>
+  <title>Ficha de <%= cliente.nombre %> <%= cliente.apellido %></title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .logo {
+      width: 120px;
+      display: block;
+      margin: 20px auto 10px;
+    }
+    .volver {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+    }
+    .ficha {
+      background: white;
+      border-radius: 1rem;
+      padding: 2rem;
+      margin-top: 1rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    footer {
+      margin-top: 4rem;
+      text-align: center;
+      color: gray;
+    }
+  </style>
 </head>
 <body>
-  <div class="container mt-4">
-    <h2>Agregar Nuevo Alumno</h2>
-    <form method="POST" action="/nuevo">
-      <div class="row mb-3">
-        <div class="col">
-          <label>Nombre</label>
-          <input type="text" name="nombre" class="form-control" required>
-        </div>
-        <div class="col">
-          <label>Apellido</label>
-          <input type="text" name="apellido" class="form-control" required>
-        </div>
-      </div>
+  <div class="container position-relative">
+    <a href="/" class="btn btn-outline-secondary volver">← Volver</a>
 
-      <div class="row mb-3">
+    <img src="/images/logo.png" alt="Logo" class="logo">
+    <h2 class="text-center mb-4">Ficha de <%= cliente.nombre %> <%= cliente.apellido %></h2>
+
+    <div class="ficha">
+      <form method="POST" action="/cliente/<%= cliente._id %>" id="form-editar">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label>Nombre</label>
+            <input class="form-control" name="nombre" value="<%= cliente.nombre %>" readonly>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label>Apellido</label>
+            <input class="form-control" name="apellido" value="<%= cliente.apellido %>" readonly>
+          </div>
+          <div class="col-md-4 mb-3">
+            <label>Edad</label>
+            <input class="form-control" name="edad" value="<%= cliente.edad %>" readonly>
+          </div>
+          <div class="col-md-4 mb-3">
+            <label>Fecha de Nacimiento</label>
+            <input type="date" class="form-control" name="fechaNacimiento" value="<%= cliente.fechaNacimiento ? cliente.fechaNacimiento.toISOString().split('T')[0] : '' %>" readonly>
+          </div>
+          <div class="col-md-4 mb-3">
+            <label>Celular</label>
+            <input class="form-control" name="celular" value="<%= cliente.celular %>" readonly>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label>Dirección</label>
+            <input class="form-control" name="direccion" value="<%= cliente.direccion %>" readonly>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label>Fecha de Inicio</label>
+            <input type="date" class="form-control" name="fechaInicio" value="<%= cliente.fechaInicio.toISOString().split('T')[0] %>" readonly>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label>Plan</label>
+            <select name="plan" class="form-select" disabled>
+              <option <%= cliente.plan === 'Básico' ? 'selected' : '' %>>Básico</option>
+              <option <%= cliente.plan === 'Intermedio' ? 'selected' : '' %>>Intermedio</option>
+              <option <%= cliente.plan === 'Full' ? 'selected' : '' %>>Full</option>
+            </select>
+          </div>
+        </div>
+
+        <h5 class="mt-4">Entrenamiento Semanal</h5>
+        <div class="row">
+          <% ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'].forEach(dia => { %>
+            <div class="col-md-4 mb-2">
+              <label><%= dia.charAt(0).toUpperCase() + dia.slice(1) %></label>
+              <input type="text" class="form-control" name="entrenamiento.<%= dia %>" value="<%= cliente.entrenamiento?.[dia] || '' %>" readonly>
+            </div>
+          <% }); %>
+        </div>
+
+        <div class="mt-4 text-center">
+          <button type="button" id="btn-editar" class="btn btn-warning">Editar Información</button>
+          <button type="submit" id="btn-guardar" class="btn btn-success d-none">Guardar Cambios</button>
+        </div>
+      </form>
+
+      <hr class="my-4">
+
+      <h5>Pagos</h5>
+      <form method="POST" action="/cliente/<%= cliente._id %>/pago" class="row g-3">
         <div class="col-md-4">
-          <label>Edad</label>
-          <input type="number" name="edad" class="form-control">
-          <div class="col-md-4">
-  <label>Fecha de Nacimiento</label>
-  <input type="date" name="fechaNacimiento" class="form-control">
-</div>
-
+          <label>Fecha</label>
+          <input type="date" name="fecha" class="form-control" required>
         </div>
         <div class="col-md-4">
-          <label>Celular</label>
-          <input type="text" name="celular" class="form-control">
+          <label>Monto</label>
+          <input type="number" name="monto" class="form-control" required>
         </div>
-        <div class="col-md-4">
-          <label>Dirección</label>
-          <input type="text" name="direccion" class="form-control">
+        <div class="col-md-4 d-flex align-items-end">
+          <button type="submit" class="btn btn-primary w-100">Agregar Pago</button>
         </div>
-      </div>
+      </form>
 
-      <div class="row mb-3">
-        <div class="col-md-6">
-          <label>Fecha de Inicio</label>
-          <input type="date" name="fechaInicio" class="form-control">
-        </div>
-        <div class="col-md-6">
-          <label>Plan</label>
-          <select name="plan" class="form-select">
-            <option value="Básico">Básico</option>
-            <option value="Intermedio">Intermedio</option>
-            <option value="Full">Full</option>
-          </select>
-        </div>
-      </div>
+      <ul class="list-group mt-3">
+        <% cliente.pagos.forEach(pago => { %>
+          <li class="list-group-item d-flex justify-content-between">
+            <span><strong><%= new Date(pago.fecha).toLocaleDateString() %></strong></span>
+            <span>$<%= pago.monto %></span>
+          </li>
+        <% }); %>
+      </ul>
+    </div>
 
-      <button type="submit" class="btn btn-success">Guardar Alumno</button>
-      <a href="/" class="btn btn-secondary">Cancelar</a>
-    </form>
+    <footer>
+      <p>Todos los derechos reservados - Levi Prog.</p>
+    </footer>
   </div>
+
+  <script>
+    document.getElementById('btn-editar').addEventListener('click', () => {
+      document.querySelectorAll('input, select').forEach(el => el.removeAttribute('readonly'));
+      document.querySelector('select[name="plan"]').removeAttribute('disabled');
+      document.getElementById('btn-guardar').classList.remove('d-none');
+      document.getElementById('btn-editar').classList.add('d-none');
+    });
+  </script>
 </body>
 </html>

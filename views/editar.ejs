@@ -44,6 +44,14 @@
     <div class="ficha">
       <form method="POST" action="/cliente/<%= cliente._id %>" id="form-editar">
         <div class="row">
+          <div class="col-md-6 mb-3">
+            <label>Nombre</label>
+            <input class="form-control" name="nombre" value="<%= cliente.nombre %>" readonly>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label>Apellido</label>
+            <input class="form-control" name="apellido" value="<%= cliente.apellido %>" readonly>
+          </div>
           <div class="col-md-4 mb-3">
             <label>Edad</label>
             <input class="form-control" name="edad" value="<%= cliente.edad %>" readonly>
