@@ -1,0 +1,21 @@
+body {
+  font-family: 'Segoe UI', sans-serif;
+}
+
+h1, h2, h3, h4, h5 {
+  font-weight: 600;
+}
+
+table th, table td {
+  vertical-align: middle !important;
+}
+
+.estado-vencido {
+  color: red;
+  font-weight: bold;
+}
+
+.estado-aldia {
+  color: green;
+  font-weight: bold;
+}
