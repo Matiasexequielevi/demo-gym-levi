@@ -1,3 +1,4 @@
+<!-- NUEVO ALUMNO - COMPLETO Y FUNCIONAL -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -42,7 +43,7 @@
     <h2 class="text-center mb-4">Nuevo Alumno</h2>
 
     <div class="ficha">
-      <form method="POST" action="/cliente">
+      <form method="POST" action="/nuevo">
         <div class="row">
           <div class="col-md-6 mb-3">
             <label>Nombre</label>
@@ -76,7 +77,7 @@
             <label>Plan</label>
             <select name="plan" class="form-select">
               <option value="Básico">Básico</option>
-              <option value="Intermedio">Intermedio</option>
+              <option value="Intermedio" selected>Intermedio</option>
               <option value="Full">Full</option>
             </select>
           </div>

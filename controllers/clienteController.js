@@ -57,22 +57,21 @@ const mostrarClientes = async (req, res) => {
       });
     }
 
-    // Cumpleaños
-    if (cliente.fechaNacimiento) {
-      const nacimiento = new Date(cliente.fechaNacimiento);
-      const dia = nacimiento.getUTCDate();
-      const mes = nacimiento.getUTCMonth();
+   if (cliente.fechaNacimiento) {
+  const nacimiento = new Date(cliente.fechaNacimiento);
+  const dia = nacimiento.getDate(); // corregido
+  const mes = nacimiento.getMonth(); // corregido
 
-      // Cumpleaños hoy
-      if (dia === hoy.getDate() && mes === hoy.getMonth()) {
-        cumpleanieros.push(cliente);
-      } else {
-        // Próximos 5 días
-        const cumpleEsteAño = new Date(hoy.getFullYear(), mes, dia);
-        const diffDias = Math.floor((cumpleEsteAño - hoy) / (1000 * 60 * 60 * 24));
-        if (diffDias > 0 && diffDias <= 5) {
-          proximosCumples.push(cliente);
-        }
+  // Cumpleaños hoy
+  if (dia === hoy.getDate() && mes === hoy.getMonth()) {
+    cumpleanieros.push(cliente);
+  } else {
+    // Próximos 5 días
+    const cumpleEsteAño = new Date(hoy.getFullYear(), mes, dia);
+    const diffDias = Math.floor((cumpleEsteAño - hoy) / (1000 * 60 * 60 * 24));
+    if (diffDias > 0 && diffDias <= 5) {
+      proximosCumples.push(cliente);
+    }
       }
     }
   });
