@@ -40,19 +40,18 @@ const mostrarClientes = async (req, res) => {
       cliente.estado = 'Vencido';
     }
 
-    // Cumpleaños
     if (cliente.fechaNacimiento) {
       const cumple = new Date(cliente.fechaNacimiento);
       const diaCumple = cumple.getDate();
       const mesCumple = cumple.getMonth();
 
       if (diaCumple === diaHoy && mesCumple === mesHoy) {
-        cumpleanieros.push(cliente);
+        cumpleañeros.push(cliente.nombre + ' ' + cliente.apellido);
       } else {
-        const esteAnio = new Date(ahoraArgentina.getFullYear(), mesCumple, diaCumple);
-        const diffDias = Math.ceil((esteAnio - ahoraArgentina) / (1000 * 60 * 60 * 24));
+        const esteAño = new Date(ahoraArgentina.getFullYear(), mesCumple, diaCumple);
+        const diffDias = Math.ceil((esteAño - ahoraArgentina) / (1000 * 60 * 60 * 24));
         if (diffDias > 0 && diffDias <= 5) {
-          proximosCumples.push(cliente);
+          proximosCumples.push(`${cliente.nombre} ${cliente.apellido} (${diaCumple}/${mesCumple + 1})`);
         }
       }
     }
