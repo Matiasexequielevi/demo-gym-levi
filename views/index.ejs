@@ -37,12 +37,17 @@
       box-shadow: 0 4px 8px rgba(0,0,0,0.2);
       z-index: 999;
     }
-    #cumple-popup {
+    #cumple-popup, #prox-cumples {
       position: fixed;
-      top: 20px;
       right: 20px;
-      max-width: 300px;
       z-index: 9999;
+      max-width: 320px;
+    }
+    #cumple-popup {
+      top: 20px;
+    }
+    #prox-cumples {
+      top: 140px;
     }
     #busqueda {
       width: 100%;
@@ -77,6 +82,31 @@
   </style>
 </head>
 <body>
+
+  <% if (cumpleanieros && cumpleanieros.length > 0) { %>
+    <div id="cumple-popup" class="alert alert-info alert-dismissible fade show">
+      <button type="button" class="btn-close" onclick="document.getElementById('cumple-popup').style.display='none';"></button>
+      🎉 <strong>Hoy es el cumpleaños de:</strong>
+      <ul class="mb-0">
+        <% cumpleanieros.forEach(c => { %>
+          <li><strong><%= c.nombre %> <%= c.apellido %></strong></li>
+        <% }); %>
+      </ul>
+    </div>
+  <% } %>
+
+  <% if (proximosCumples && proximosCumples.length > 0) { %>
+    <div id="prox-cumples" class="alert alert-warning alert-dismissible fade show">
+      <button type="button" class="btn-close" onclick="document.getElementById('prox-cumples').style.display='none';"></button>
+      🎂 <strong>Próximos cumpleaños (5 días):</strong>
+      <ul class="mb-0">
+        <% proximosCumples.forEach(c => { %>
+          <li><%= c.nombre %> <%= c.apellido %> - <%= new Date(c.fechaNacimiento).toLocaleDateString() %></li>
+        <% }); %>
+      </ul>
+    </div>
+  <% } %>
+
   <div class="container">
     <img src="/images/logo.png" alt="Logo" class="logo">
     <h1 class="text-center mb-4">Sistema GYM - DEMO</h1>
@@ -91,18 +121,6 @@
         <a href="/logout" class="btn btn-outline-danger">Cerrar Sesión</a>
       </div>
     </div>
-
-    <% if (cumpleanieros && cumpleanieros.length > 0) { %>
-      <div id="cumple-popup" class="alert alert-info alert-dismissible fade show">
-        <button type="button" class="btn-close" onclick="document.getElementById('cumple-popup').style.display='none';"></button>
-        🎉 Hoy es el cumpleaños de:
-        <ul class="mb-0">
-          <% cumpleanieros.forEach(c => { %>
-            <li><strong><%= c.nombre %> <%= c.apellido %></strong></li>
-          <% }); %>
-        </ul>
-      </div>
-    <% } %>
 
     <div class="row text-center mb-4">
       <div class="col-md-3">
@@ -194,7 +212,6 @@
     function filtrar() {
       const input = document.getElementById("busqueda").value.toLowerCase();
       const filas = document.querySelectorAll("#tabla-clientes tbody tr");
-
       filas.forEach(fila => {
         const texto = fila.innerText.toLowerCase();
         fila.style.display = texto.includes(input) ? "" : "none";
