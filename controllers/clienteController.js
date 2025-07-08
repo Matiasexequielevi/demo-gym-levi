@@ -86,6 +86,18 @@ const mostrarClientes = async (req, res) => {
   });
 };
 
+// Crear nuevo cliente
+const crearCliente = async (req, res) => {
+  try {
+    const cliente = new Cliente(req.body);
+    await cliente.save();
+    res.redirect('/');
+  } catch (error) {
+    console.error('Error al crear cliente:', error);
+    res.status(500).send('Error al crear el alumno');
+  }
+};
+
 // Ver ficha
 const verCliente = async (req, res) => {
   const cliente = await Cliente.findById(req.params.id);
@@ -115,6 +127,7 @@ module.exports = {
   loginPost,
   logout,
   mostrarClientes,
+  crearCliente,
   verCliente,
   editarCliente,
   agregarPago

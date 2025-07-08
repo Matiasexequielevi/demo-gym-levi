@@ -10,6 +10,7 @@ const {
   editarCliente,
   agregarPago
 } = require('../controllers/clienteController');
+const Cliente = require('../models/Cliente');
 
 // Middleware para proteger rutas
 function protegido(req, res, next) {
@@ -28,27 +29,33 @@ router.get('/logout', logout);
 // Inicio protegido
 router.get('/', protegido, mostrarClientes);
 
-// Ficha del cliente
+// Ver ficha del cliente
 router.get('/cliente/:id', protegido, verCliente);
+
+// Editar cliente
 router.post('/cliente/:id', protegido, editarCliente);
 
-// Agregar pago
+// Agregar pago a un cliente
 router.post('/cliente/:id/pago', protegido, agregarPago);
 
-// Nuevo alumno
+// Eliminar cliente
+router.post('/cliente/:id/eliminar', protegido, async (req, res) => {
+  await Cliente.findByIdAndDelete(req.params.id);
+  res.redirect('/');
+});
+
+// Página para crear nuevo cliente
 router.get('/nuevo', protegido, (req, res) => {
   res.render('nueva');
 });
 
+// Crear nuevo cliente
 router.post('/nuevo', protegido, async (req, res) => {
-  const Cliente = require('../models/Cliente');
-
   const nuevo = new Cliente({
     nombre: req.body.nombre,
     apellido: req.body.apellido,
     edad: req.body.edad,
     fechaNacimiento: req.body.fechaNacimiento,
-
     celular: req.body.celular,
     direccion: req.body.direccion,
     fechaInicio: req.body.fechaInicio,
@@ -68,9 +75,9 @@ router.post('/nuevo', protegido, async (req, res) => {
   await nuevo.save();
   res.redirect('/');
 });
+
 // Reportes
 router.get('/reportes', protegido, async (req, res) => {
-  const Cliente = require('../models/Cliente');
   const desde = req.query.desde || '';
   const hasta = req.query.hasta || '';
   const pagosFiltrados = [];
@@ -98,12 +105,5 @@ router.get('/reportes', protegido, async (req, res) => {
 
   res.render('reportes', { pagosFiltrados, total, desde, hasta });
 });
-// Eliminar alumno
-router.post('/cliente/:id/eliminar', protegido, async (req, res) => {
-  const Cliente = require('../models/Cliente');
-  await Cliente.findByIdAndDelete(req.params.id);
-  res.redirect('/');
-});
-
 
 module.exports = router;
