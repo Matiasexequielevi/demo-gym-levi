@@ -13,7 +13,7 @@ const mostrarClientes = async (req, res) => {
   const mesHoy = ahoraArgentina.getMonth();
 
   let totalIngresos = 0;
-  let cumpleanieros = [];
+  let cumpleañeros = [];
   let proximosCumples = [];
 
   for (const cliente of clientes) {
@@ -61,7 +61,7 @@ const mostrarClientes = async (req, res) => {
   res.render('index', {
     clientes,
     totalIngresos,
-    cumpleanieros,
+    cumpleañeros,
     proximosCumples,
     busqueda: ''
   });
