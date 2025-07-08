@@ -1,7 +1,72 @@
 const Cliente = require('../models/Cliente');
-const bcrypt = require('bcrypt');
 
-// Login demo
+// Mostrar todos los clientes (con cumpleaños y resumen)
+const mostrarClientes = async (req, res) => {
+  const clientes = await Cliente.find().sort({ apellido: 1 });
+
+  const ahora = new Date();
+  const ahoraArgentina = new Date(ahora.toLocaleString("en-US", { timeZone: "America/Argentina/Buenos_Aires" }));
+  const hoySinHora = new Date(ahoraArgentina);
+  hoySinHora.setHours(0, 0, 0, 0);
+
+  const diaHoy = ahoraArgentina.getDate();
+  const mesHoy = ahoraArgentina.getMonth();
+
+  let totalIngresos = 0;
+  let cumpleanieros = [];
+  let proximosCumples = [];
+
+  for (const cliente of clientes) {
+    // Estado de pago
+    let ultimoPago = null;
+    if (cliente.pagos && cliente.pagos.length > 0) {
+      ultimoPago = cliente.pagos.reduce((a, b) => new Date(a.fecha) > new Date(b.fecha) ? a : b);
+
+      cliente.pagos.forEach(p => {
+        const fechaPago = new Date(p.fecha);
+        fechaPago.setHours(0, 0, 0, 0);
+        if (fechaPago.getTime() === hoySinHora.getTime()) {
+          totalIngresos += p.monto;
+        }
+      });
+    }
+
+    const hace30Dias = new Date();
+    hace30Dias.setDate(hace30Dias.getDate() - 30);
+
+    if (ultimoPago && new Date(ultimoPago.fecha) >= hace30Dias) {
+      cliente.estado = 'Al Día';
+    } else {
+      cliente.estado = 'Vencido';
+    }
+
+    // Cumpleaños
+    if (cliente.fechaNacimiento) {
+      const cumple = new Date(cliente.fechaNacimiento);
+      const diaCumple = cumple.getDate();
+      const mesCumple = cumple.getMonth();
+
+      if (diaCumple === diaHoy && mesCumple === mesHoy) {
+        cumpleanieros.push(cliente);
+      } else {
+        const esteAnio = new Date(ahoraArgentina.getFullYear(), mesCumple, diaCumple);
+        const diffDias = Math.ceil((esteAnio - ahoraArgentina) / (1000 * 60 * 60 * 24));
+        if (diffDias > 0 && diffDias <= 5) {
+          proximosCumples.push(cliente);
+        }
+      }
+    }
+  }
+
+  res.render('index', {
+    clientes,
+    totalIngresos,
+    cumpleanieros,
+    proximosCumples,
+    busqueda: ''
+  });
+};
+
 const login = (req, res) => {
   res.render('login', { error: null });
 };
@@ -22,70 +87,6 @@ const logout = (req, res) => {
   });
 };
 
-// Mostrar todos los clientes
-const mostrarClientes = async (req, res) => {
-  const busqueda = req.query.busqueda || '';
-  const regex = new RegExp(busqueda, 'i');
-
-  const clientes = await Cliente.find({
-    $or: [
-      { nombre: regex },
-      { apellido: regex }
-    ]
-  }).sort({ apellido: 1 });
-
-  const hoy = new Date();
-  let totalIngresos = 0;
-  let cumpleanieros = [];
-  let proximosCumples = [];
-
-  clientes.forEach(cliente => {
-    // Estado de pago
-    cliente.estado = 'Vencido';
-    if (cliente.fechaPago) {
-      const diff = Math.floor((hoy - cliente.fechaPago) / (1000 * 60 * 60 * 24));
-      if (diff <= 30) cliente.estado = 'Al Día';
-    }
-
-    // Sumar ingresos de hoy
-    if (cliente.pagos && cliente.pagos.length) {
-      cliente.pagos.forEach(p => {
-        const pagoFecha = new Date(p.fecha);
-        if (pagoFecha.toDateString() === hoy.toDateString()) {
-          totalIngresos += p.monto;
-        }
-      });
-    }
-
-   if (cliente.fechaNacimiento) {
-  const nacimiento = new Date(cliente.fechaNacimiento);
-  const dia = nacimiento.getDate(); // corregido
-  const mes = nacimiento.getMonth(); // corregido
-
-  // Cumpleaños hoy
-  if (dia === hoy.getDate() && mes === hoy.getMonth()) {
-    cumpleanieros.push(cliente);
-  } else {
-    // Próximos 5 días
-    const cumpleEsteAño = new Date(hoy.getFullYear(), mes, dia);
-    const diffDias = Math.floor((cumpleEsteAño - hoy) / (1000 * 60 * 60 * 24));
-    if (diffDias > 0 && diffDias <= 5) {
-      proximosCumples.push(cliente);
-    }
-      }
-    }
-  });
-
-  res.render('index', {
-    clientes,
-    totalIngresos,
-    cumpleanieros,
-    proximosCumples,
-    busqueda
-  });
-};
-
-// Crear nuevo cliente
 const crearCliente = async (req, res) => {
   try {
     const cliente = new Cliente(req.body);
@@ -97,13 +98,11 @@ const crearCliente = async (req, res) => {
   }
 };
 
-// Ver ficha
 const verCliente = async (req, res) => {
   const cliente = await Cliente.findById(req.params.id);
   res.render('editar', { cliente });
 };
 
-// Guardar cambios de cliente
 const editarCliente = async (req, res) => {
   const cliente = await Cliente.findById(req.params.id);
   Object.assign(cliente, req.body);
@@ -111,7 +110,6 @@ const editarCliente = async (req, res) => {
   res.redirect(`/cliente/${cliente._id}`);
 };
 
-// Agregar pago
 const agregarPago = async (req, res) => {
   const cliente = await Cliente.findById(req.params.id);
   const { fecha, monto } = req.body;

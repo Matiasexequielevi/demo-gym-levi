@@ -37,7 +37,7 @@
       box-shadow: 0 4px 8px rgba(0,0,0,0.2);
       z-index: 999;
     }
-    #cumple-popup, #prox-cumples {
+    #ventanaCumple, #ventanaProximos {
       position: fixed;
       right: 20px;
       z-index: 9999;
@@ -45,10 +45,10 @@
       border-radius: 10px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     }
-    #cumple-popup {
+    #ventanaCumple {
       top: 80px;
     }
-    #prox-cumples {
+    #ventanaProximos {
       top: 220px;
     }
     #busqueda {
@@ -80,8 +80,8 @@
         justify-content: center;
         margin: 0 auto;
       }
-      #cumple-popup,
-      #prox-cumples {
+      #ventanaCumple,
+      #ventanaProximos {
         position: static;
         max-width: 100%;
         margin: 10px 0;
@@ -91,27 +91,29 @@
 </head>
 <body>
 
-  <% if (cumpleanieros && cumpleanieros.length > 0) { %>
-    <div id="cumple-popup" class="alert alert-info alert-dismissible fade show">
-      <button type="button" class="btn-close" onclick="this.parentElement.style.display='none';"></button>
-      🎉 <strong>Hoy es el cumpleaños de:</strong>
-      <ul class="mb-0">
-        <% cumpleanieros.forEach(c => { %>
-          <li><strong><%= c.nombre %> <%= c.apellido %></strong></li>
-        <% }); %>
+  <% if (cumpleañeros && cumpleañeros.length > 0) { %>
+    <div id="ventanaCumple" class="ventana-cumple alert alert-warning shadow">
+      <button class="btn-cerrar" onclick="cerrarCumple()">×</button>
+      <h5 class="mb-2">🎉 ¡Cumpleaños de Hoy!</h5>
+      <ul class="mb-1 ps-3">
+        <% cumpleañeros.forEach(c => { %>
+          <li>🎂 <%= c.nombre %> <%= c.apellido %></li>
+        <% }) %>
       </ul>
+      <p class="mb-0">¡No te olvides de saludar! 🎂</p>
     </div>
   <% } %>
 
   <% if (proximosCumples && proximosCumples.length > 0) { %>
-    <div id="prox-cumples" class="alert alert-warning alert-dismissible fade show">
-      <button type="button" class="btn-close" onclick="this.parentElement.style.display='none';"></button>
-      🎂 <strong>Próximos cumpleaños (5 días):</strong>
-      <ul class="mb-0">
+    <div id="ventanaProximos" class="ventana-proximos alert alert-info shadow">
+      <button class="btn-cerrar" onclick="cerrarProximos()">×</button>
+      <h5 class="mb-2">🎁 Próximos Cumpleaños</h5>
+      <ul class="mb-1 ps-3">
         <% proximosCumples.forEach(c => { %>
-          <li><%= c.nombre %> <%= c.apellido %> - <%= new Date(c.fechaNacimiento).toLocaleDateString() %></li>
-        <% }); %>
+          <li>🎈 <%= c.nombre %> <%= c.apellido %></li>
+        <% }) %>
       </ul>
+      <p class="mb-0">¡Prepará los saludos y sorpresas! 🥳</p>
     </div>
   <% } %>
 
@@ -224,6 +226,14 @@
         const texto = fila.innerText.toLowerCase();
         fila.style.display = texto.includes(input) ? "" : "none";
       });
+    }
+    function cerrarCumple() {
+      const aviso = document.getElementById('ventanaCumple');
+      if (aviso) aviso.style.display = 'none';
+    }
+    function cerrarProximos() {
+      const aviso = document.getElementById('ventanaProximos');
+      if (aviso) aviso.style.display = 'none';
     }
   </script>
 </body>
