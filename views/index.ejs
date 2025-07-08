@@ -42,12 +42,14 @@
       right: 20px;
       z-index: 9999;
       max-width: 320px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     }
     #cumple-popup {
-      top: 20px;
+      top: 80px;
     }
     #prox-cumples {
-      top: 140px;
+      top: 220px;
     }
     #busqueda {
       width: 100%;
@@ -91,7 +93,7 @@
 
   <% if (cumpleanieros && cumpleanieros.length > 0) { %>
     <div id="cumple-popup" class="alert alert-info alert-dismissible fade show">
-      <button type="button" class="btn-close" onclick="document.getElementById('cumple-popup').style.display='none';"></button>
+      <button type="button" class="btn-close" onclick="this.parentElement.style.display='none';"></button>
       🎉 <strong>Hoy es el cumpleaños de:</strong>
       <ul class="mb-0">
         <% cumpleanieros.forEach(c => { %>
@@ -103,7 +105,7 @@
 
   <% if (proximosCumples && proximosCumples.length > 0) { %>
     <div id="prox-cumples" class="alert alert-warning alert-dismissible fade show">
-      <button type="button" class="btn-close" onclick="document.getElementById('prox-cumples').style.display='none';"></button>
+      <button type="button" class="btn-close" onclick="this.parentElement.style.display='none';"></button>
       🎂 <strong>Próximos cumpleaños (5 días):</strong>
       <ul class="mb-0">
         <% proximosCumples.forEach(c => { %>
@@ -176,7 +178,7 @@
               <td><%= cliente.edad %></td>
               <td><%= cliente.celular || '-' %></td>
               <td><%= cliente.plan %></td>
-              <td><%= new Date(cliente.fechaInicio).toLocaleDateString() %></td>
+              <td><%= cliente.fechaInicio ? new Date(cliente.fechaInicio).toLocaleDateString() : '-' %></td>
               <td><%= cliente.fechaPago ? new Date(cliente.fechaPago).toLocaleDateString() : '-' %></td>
               <td class="<%= cliente.estado === 'Vencido' ? 'estado-vencido' : 'estado-aldia' %>"><%= cliente.estado %></td>
               <td>
